@@ -4,7 +4,8 @@ const cols = 20;
 
 let board;
 let context;
-let blockSize; // calculated dynamically
+let blockSize;
+let score = 0;
 
 // snake head
 let snakeX;
@@ -21,11 +22,19 @@ let gameOver = false;
 // touch swipe tracking
 let touchStartX = 0;
 let touchStartY = 0;
-const SWIPE_THRESHOLD = 30; // minimum swipe distance
+const SWIPE_THRESHOLD = 30;
 
 // timing
 const MOVE_INTERVAL = 1000 / 7;
 let lastUpdateTime = 0;
+
+// highscore helpers
+function getHighScore() {
+  return parseInt(localStorage.getItem("snakeHighScore") || "0", 10);
+}
+function setHighScore(s) {
+  localStorage.setItem("snakeHighScore", String(s));
+}
 
 window.onload = function () {
   board = document.getElementById("board");
@@ -78,9 +87,8 @@ window.onload = function () {
 };
 
 function resizeCanvas() {
-  // Fit into viewport but cap to 500px so it isn’t enormous on desktop
   const rawMax = Math.min(window.innerWidth, window.innerHeight) * 0.9;
-  const displaySize = Math.min(500, Math.floor(rawMax)); // cap at 500px
+  const displaySize = Math.min(500, Math.floor(rawMax));
   const dpr = window.devicePixelRatio || 1;
 
   board.style.width = board.style.height = `${displaySize}px`;
@@ -104,9 +112,19 @@ function gameLoop(timestamp) {
 }
 
 function update() {
-  // clear board
+  // clear board first
   context.fillStyle = "black";
   context.fillRect(0, 0, board.width, board.height);
+
+  // draw score & high score
+  const highScore = getHighScore();
+  const infoFontSize = Math.max(12, Math.floor(blockSize * 0.4));
+  context.font = `${infoFontSize}px monospace`;
+  context.textBaseline = "top";
+  context.textAlign = "left";
+  context.fillStyle = "#fff";
+  context.fillText(`Score: ${score}`, 5, 5);
+  context.fillText(`High: ${highScore}`, 5, 5 + infoFontSize + 4);
 
   // draw food
   context.font = `${blockSize}px serif`;
@@ -120,6 +138,7 @@ function update() {
   ) {
     snakeBody.push([foodX, foodY]);
     placeFood();
+    score += 1;
   }
 
   // move body
@@ -167,8 +186,16 @@ function update() {
 
 function endGame() {
   gameOver = true;
+  const prevHigh = getHighScore();
+  let message;
+  if (score > prevHigh) {
+    setHighScore(score);
+    message = `🎉 New High Score: ${score}!`;
+  } else {
+    message = `Game Over. Score: ${score}. High Score: ${prevHigh}.`;
+  }
   setTimeout(() => {
-    alert("Game Over");
+    alert(message);
     window.location.reload();
   }, 50);
 }
