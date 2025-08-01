@@ -1,13 +1,65 @@
 @import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap");
 
-body {
-  text-align: center;
-  font-family: "Press Start 2P", system-ui;
-  font-weight: 400;
-  font-style: normal;
-  background-color: lightgreen;
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
 }
 
+html, body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+}
+
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #a8e6cf 0%, #dcedc1 70%);
+  font-family: "Press Start 2P", system-ui, monospace;
+  text-align: center;
+  overscroll-behavior: contain;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.game-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+}
+
+/* Desktop: title beside canvas */
+@media (min-width: 900px) {
+  .game-wrapper {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+  .title-wrapper {
+    margin-right: 2rem;
+  }
+}
+
+h1 {
+  font-size: clamp(1.75rem, 3vw, 3rem);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Canvas styling */
 canvas {
-  border: 25px solid green;
+  display: block;
+  touch-action: none;
+  border: solid 1.5rem green;
+  border-radius: 8px;
+  background: #000;
+  max-width: 500px;
+  max-height: 500px;
+  width: 90vmin;
+  height: 90vmin;
 }
